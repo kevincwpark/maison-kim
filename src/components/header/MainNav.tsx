@@ -7,11 +7,12 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 const NAV = [
-  { href: "/services", label: "Services" },
-  { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "About" },
+  { href: "/gallery", label: "Gallery" },
+  { href: "/services", label: "Services" },
   { href: "/contact", label: "Contact" },
 ];
+
 
 export default function MainNav() {
   const pathname = usePathname();
