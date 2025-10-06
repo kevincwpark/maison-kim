@@ -1,27 +1,205 @@
+/* globals.css — minimal, elegant, off-white aesthetic for the client */
+/* Tailwind v4 CSS-first setup */
+
 @import "tailwindcss";
 @config "../../tailwind.config.js";
+@plugin "tailwindcss-animate";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Enable `.dark` variant by toggling class on <html> */
+@custom-variant dark (&:is(.dark *));
 
+/* =========================
+   THEME TOKENS (OKLCH)
+   ========================= */
 @theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* --- Color system (light) --- */
+  /* Warm off-white background, high-contrast ink */
+  --color-background: oklch(0.97 0.015 85);  /* soft warm cream */
+  --color-foreground: oklch(0.16 0.015 270); /* near-black, neutral */
+
+  /* Surfaces */
+  --color-card: var(--color-background);
+  --color-card-foreground: var(--color-foreground);
+  --color-popover: var(--color-background);
+  --color-popover-foreground: var(--color-foreground);
+
+  /* Accents (kept very subtle to stay minimal) */
+  --color-primary: oklch(0.32 0.02 270);          /* muted charcoal */
+  --color-primary-foreground: oklch(0.98 0 0);    /* white */
+  --color-secondary: oklch(0.94 0.01 85);         /* pale warm tint */
+  --color-secondary-foreground: var(--color-primary);
+
+  /* UI */
+  --color-muted: oklch(0.94 0.01 85);
+  --color-muted-foreground: oklch(0.52 0.01 270);
+  --color-accent: var(--color-muted);
+  --color-accent-foreground: var(--color-primary);
+  --color-destructive: oklch(0.60 0.20 27.3);
+
+  --color-border: oklch(0.90 0.01 85);
+  --color-input: var(--color-border);
+  --color-ring: oklch(0.70 0 0);
+
+  /* Optional chart palette (kept neutral) */
+  --color-chart-1: oklch(0.62 0.05 270);
+  --color-chart-2: oklch(0.75 0.09 90);
+  --color-chart-3: oklch(0.68 0.09 35);
+  --color-chart-4: oklch(0.58 0.07 220);
+  --color-chart-5: oklch(0.80 0.06 140);
+
+  /* Sidebar (not required, but ready) */
+  --color-sidebar: oklch(0.985 0.005 85);
+  --color-sidebar-foreground: var(--color-foreground);
+  --color-sidebar-primary: var(--color-primary);
+  --color-sidebar-primary-foreground: var(--color-primary-foreground);
+  --color-sidebar-accent: var(--color-accent);
+  --color-sidebar-accent-foreground: var(--color-accent-foreground);
+  --color-sidebar-border: var(--color-border);
+  --color-sidebar-ring: var(--color-ring);
+
+  /* Typography (hook these up in layout.tsx with next/font) */
+  --font-sans: var(--font-geist-sans, ui-sans-serif, system-ui, sans-serif);
+  --font-serif: var(--font-editorial-serif, ui-serif, Georgia, serif);
+  --font-mono: var(--font-geist-mono, ui-monospace, SFMono-Regular, monospace);
+
+  /* Radius */
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Containers (for clean measure) */
+  --container-sm: 40rem;  /* ~640px  */
+  --container-md: 56rem;  /* ~896px  */
+  --container-lg: 72rem;  /* ~1152px */
+  --container-xl: 80rem;  /* ~1280px */
 }
 
-@media (prefers-color-scheme: dark) {
+/* --- Dark mode palette (kept tasteful/minimal) --- */
+.dark {
+  --color-background: oklch(0.18 0.02 270);
+  --color-foreground: oklch(0.97 0 0);
+
+  --color-card: oklch(0.22 0.02 270);
+  --color-card-foreground: var(--color-foreground);
+  --color-popover: oklch(0.22 0.02 270);
+  --color-popover-foreground: var(--color-foreground);
+
+  --color-primary: oklch(0.92 0 0);
+  --color-primary-foreground: oklch(0.22 0.02 270);
+  --color-secondary: oklch(0.26 0.01 85);
+  --color-secondary-foreground: var(--color-foreground);
+
+  --color-muted: oklch(0.26 0.01 85);
+  --color-muted-foreground: oklch(0.72 0.01 270);
+  --color-accent: var(--color-muted);
+  --color-accent-foreground: var(--color-foreground);
+  --color-destructive: oklch(0.70 0.19 22.2);
+
+  --color-border: oklch(1 0 0 / 10%);
+  --color-input: oklch(1 0 0 / 15%);
+  --color-ring: oklch(0.56 0 0);
+}
+
+/* =========================
+   BASE STYLES
+   ========================= */
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: light dark;
+    --scroll-gutter: 1rem;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    hanging-punctuation: first last;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+
+  /* Editorial headings (serif) */
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    font-kerning: normal;
+  }
+
+  /* Tight, elegant link styling */
+  a {
+    text-underline-offset: 0.2em;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  /* Images: remove inline gaps, keep crisp edges */
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Selection (subtle) */
+  ::selection {
+    background: oklch(0.86 0.02 85);
+  }
+
+  /* Reduced-motion friendly */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* =========================
+   UTILITIES / HELPERS
+   ========================= */
+@layer utilities {
+  /* Page container helpers for consistent measure */
+  .container-sm { max-width: var(--container-sm); margin-inline: auto; padding-inline: 1rem; }
+  .container-md { max-width: var(--container-md); margin-inline: auto; padding-inline: 1rem; }
+  .container-lg { max-width: var(--container-lg); margin-inline: auto; padding-inline: 1.25rem; }
+  .container-xl { max-width: var(--container-xl); margin-inline: auto; padding-inline: 1.5rem; }
+
+  /* Thin underline used in “MORE” link motif */
+  .underline-thin {
+    position: relative;
+  }
+  .underline-thin::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    translate: -50% 0;
+    bottom: -0.5rem;
+    height: 1px;
+    width: 4rem;
+    background: currentColor;
+  }
+}
+
+/* =========================
+   COMPONENT SKINS (optional)
+   ========================= */
+@layer components {
+  /* Card surface */
+  .card {
+    @apply bg-card text-card-foreground rounded-[var(--radius-lg)] border border-border;
+  }
+
+  /* Primary button (kept understated) */
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-[var(--radius-md)]
+           bg-primary text-primary-foreground px-4 py-2
+           transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
 }
